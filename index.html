@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER DASH 3D // Realistic Atmosphere Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js + Postprocessing + Howler or WebAudio -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Top HUD Overlay -->
+    <header id="hud" class="hud-layer hidden">
+      <div class="hud-left">
+        <div class="level-badge" id="hud-level-name">LEVEL 1: NEON HORIZON</div>
+        <div class="stats-tag">ATTEMPT <span id="hud-attempt">1</span></div>
+      </div>
+      <div class="hud-center">
+        <div class="progress-container">
+          <div class="progress-bar-glow"></div>
+          <div class="progress-bar-fill" id="hud-progress-fill"></div>
+          <span class="progress-text" id="hud-progress-text">0%</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="score-chip">SPEED <span id="hud-speed">1.0x</span></div>
+        <button id="btn-pause" class="btn-icon" title="Pause Game">⏸</button>
+      </div>
+    </header>
+
+    <!-- Interactive Hint / Jump Pad Pulse Indicator in Game -->
+    <div id="action-hint" class="action-hint hidden">CLICK / SPACE / TAP TO JUMP</div>
+
+    <!-- Main Menu Screen -->
+    <section id="menu-screen" class="screen-overlay active">
+      <div class="stars-backdrop"></div>
+      <div class="menu-content glass-card">
+        <div class="logo-wrapper">
+          <div class="logo-subtitle">HYPER-DIMENSIONAL RHYTHM RUNNER</div>
+          <h1 class="glow-title">CYBER<span class="accent-text">DASH</span> 3D</h1>
+        </div>
+
+        <!-- Level Selector Carousel -->
+        <div class="level-selector-box">
+          <button id="lvl-prev" class="carousel-arrow" aria-label="Previous Level">&lang;</button>
+          
+          <div class="level-card-display" id="level-card">
+            <div class="level-tag" id="level-difficulty-tag">EASY • 1★</div>
+            <h2 class="level-title" id="level-title">NEON HORIZON</h2>
+            <p class="level-desc" id="level-desc">A synthwave cyberpunk metropolis bathed in holographic gridlights. Master basic jumps & launch pads.</p>
+            <div class="atmosphere-badge" id="level-atmo">ATMOSPHERE: SYNTH CITY</div>
+            <div class="level-stats-row">
+              <span id="level-best-pct">BEST: 0%</span>
+              <span class="divider">•</span>
+              <span id="level-length">LENGTH: 45s</span>
+            </div>
+          </div>
+
+          <button id="lvl-next" class="carousel-arrow" aria-label="Next Level">&rang;</button>
+        </div>
+
+        <div class="menu-action-buttons">
+          <button id="btn-play" class="btn-primary">
+            <span class="btn-shine"></span>
+            <span class="btn-text">LAUNCH RUN [SPACE]</span>
+          </button>
+          <div class="secondary-btns">
+            <button id="btn-audio-toggle" class="btn-glass">🔊 SOUND: ON</button>
+            <button id="btn-camera-mode" class="btn-glass">📷 CAM: DYNAMIC 3D</button>
+          </div>
+        </div>
+
+        <div class="controls-guide">
+          <div class="control-item"><kbd>SPACE</kbd> / <kbd>CLICK</kbd> / <kbd>W</kbd> / <kbd>TAP</kbd> <span>Jump / Hit Pad</span></div>
+          <div class="control-item"><kbd>ESC</kbd> / <kbd>P</kbd> <span>Pause</span></div>
+          <div class="control-item"><kbd>R</kbd> <span>Instant Retry</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Death / Game Over Screen -->
+    <div id="death-screen" class="screen-overlay hidden">
+      <div class="death-glitch-layer"></div>
+      <div class="game-over-box glass-card danger-border">
+        <div class="death-status">MATRIX COLLISION</div>
+        <h2 class="death-pct"><span id="death-pct-num">42</span>%</h2>
+        <div class="attempt-counter">ATTEMPT #<span id="death-attempt-num">1</span></div>
+        
+        <div class="death-actions">
+          <button id="btn-retry" class="btn-primary pulse">TRY AGAIN [SPACE / R]</button>
+          <button id="btn-quit" class="btn-glass">SELECT LEVEL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory Screen -->
+    <div id="victory-screen" class="screen-overlay hidden">
+      <div class="victory-box glass-card gold-border">
+        <div class="victory-badge">LEVEL COMPLETED!</div>
+        <h2 class="victory-title" id="victory-lvl-name">NEON HORIZON</h2>
+        <div class="victory-stars">★★★ 100% ★★★</div>
+        <p class="victory-flavor">Atmospheric harmony restored in the continuum.</p>
+        <div class="victory-actions">
+          <button id="btn-next-level" class="btn-primary">NEXT ATMOSPHERE</button>
+          <button id="btn-victory-menu" class="btn-glass">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="screen-overlay hidden">
+      <div class="pause-box glass-card">
+        <h2>PAUSED</h2>
+        <div class="pause-actions">
+          <button id="btn-resume" class="btn-primary">RESUME [P]</button>
+          <button id="btn-restart" class="btn-glass">RESTART LEVEL</button>
+          <button id="btn-pause-quit" class="btn-glass">QUIT TO MENU</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
